@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/main_layout}"
+>
+<head>
+    <title>No Waste</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <!-- Our mission -->
+    <section class="mission">
+        <div class="container grid">
+
+            <div class="mission-text">
+                <h1>Our Mission</h1>
+                <p>
+                    At No waste we want to encourage everyone to actively recycle. Recycling reduces the need for
+                    extracting, refining and processing raw materials all of which creates substantial air and water
+                    pollution.
+                </p>
+                <p>
+                    As recycling saves energy it also reduces greenhouse gas emissions, which helps to tackle climate
+                    change. You can find a range of tools, which includes searching for recyclable items, local
+                    recycling
+                    locations and also your collection dates.
+                </p>
+            </div>
+
+            <div>
+                <img src="images/leaf.svg" alt="leaf image" class="leaf">
+            </div>
+        </div>
+    </section>
+
+    <!-- What would you like to do today -->
+    <section class="today">
+        <div class="container grid">
+            <div class="today-text">
+                <h1>What Would You Like To Do Today?</h1>
+                <p>
+                    Please select an option below
+                </p>
+                <a th:href="@{/recyclable}" class="button"><span>View Recyclable Items</span></a>
+                <a th:href="@{/locations}" class="button"><span>View Local Recycling Locations</span></a>
+                <a th:href="@{/dates}" class="button"><span>View My Collection Dates</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-text">
+                <h1>No Waste's Global Impact</h1>
+            </div>
+            <div class="grid grid-3 text-center my-4">
+                <div>
+                    <i class="fas fa-users fa-3x"></i>
+                    <h3>23,749</h3>
+                    <p class="text-secondary">PEOPLE RECYCLING</p>
+                </div>
+                <div>
+                    <i class="fas fa-recycle fa-3x"></i>
+                    <h3>341,876</h3>
+                    <p class="text-secondary">WASTE RECYCLED</p>
+                </div>
+                <div>
+                    <i class="fas fa-heart fa-3x"></i>
+                    <h3>£102,000</h3>
+                    <p class="text-secondary">MONEY FOR CHARITY</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>

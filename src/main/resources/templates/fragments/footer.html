@@ -1,0 +1,22 @@
+<footer class="footer py-5" th:fragment="footer" xmlns:th="http://www.thymeleaf.org">
+    <div class="container grid grid-3">
+        <div>
+            <h1>Group 20</h1>
+            <p>Copyright &copy; 2021</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/recyclable}">Recyclable Items</a></li>
+                <li><a th:href="@{/locations}">Recycling Locations</a></li>
+                <li><a th:href="@{/centers}">Recycling Centers</a></li>
+                <li><a th:href="@{/dates}">Collection Dates</a></li>
+            </ul>
+        </nav>
+        <div class="social">
+            <a href="https://www.facebook.com/"><i class="fab fa-facebook fa-2x"></i></a>
+            <a href="https://www.instagram.com/"><i class="fab fa-instagram fa-2x"></i></a>
+            <a href="https://www.twitter.com"><i class="fab fa-twitter fa-2x"></i></a>
+        </div>
+    </div>
+</footer>

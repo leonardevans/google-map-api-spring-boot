@@ -1,0 +1,293 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  background-color: #01a66c;
+}
+
+ul {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+p {
+  margin: 10px 0;
+}
+
+img {
+  width: 100%;
+}
+
+/* Navbar */
+.navbar {
+  background-color: black;
+  color: white;
+  height: 80px;
+}
+
+.navbar ul {
+  display: flex;
+}
+
+.navbar a {
+  color: white;
+  padding: 10px;
+  margin: 0 5px;
+}
+
+.navbar a:hover {
+  color: #01a66c;
+}
+
+.navbar .flex {
+  justify-content: space-between;
+}
+
+/* Our Mission */
+.mission {
+  height: 400px;
+  color: white;
+  position: relative;
+  padding-top: 5px;
+  padding-bottom: 40px;
+}
+
+.mission h1 {
+  text-align: center;
+  font-size: 40px;
+  animation: slideInFromLeft 1s ease-in;
+}
+
+.mission p {
+  margin: 20px 0;
+  text-align: center;
+  font-size: 20px;
+  animation: slideInFromLeft 1s ease-in;
+}
+
+.mission .grid {
+  overflow: visible;
+  grid-template-columns: 55% auto;
+  gap: 30px;
+}
+
+/* Slant design */
+.mission::before,
+.mission::after {
+  content: "";
+  position: absolute;
+  height: 100px;
+  bottom: -70px;
+  right: 0;
+  left: 0;
+  background: #a6f5c3;
+  transform: skewY(-3deg);
+  -webkit-transform: skewY(-1.8deg);
+  -moz-transform: skewY(-3deg);
+  -ms-transform: skewY(-3deg);
+}
+
+.leaf {
+  animation: slideInFromRight 1s ease-in;
+}
+
+/* What would you like to do today */
+.today {
+  height: 500px;
+  background-color: #a6f5c3;
+  color: rgb(0, 0, 0);
+  position: relative;
+}
+
+.today h1 {
+  text-align: center;
+  font-size: 40px;
+}
+
+.today p {
+  margin: 20px 0;
+  text-align: center;
+  font-size: 20px;
+}
+
+.today .grid {
+  overflow: visible;
+  grid-template-columns: 55% auto;
+  gap: 30px;
+}
+
+/* buttons */
+.button {
+  background-color: black;
+  border-radius: 25px;
+  color: rgb(255, 255, 255);
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: "\00bb";
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.button:hover {
+  background-color: #01a66c;
+  color: black;
+}
+
+/* Stats */
+.stats {
+  padding-top: 60px;
+  color: white;
+  background-color: #01a66c;
+}
+
+.stats .grid h3 {
+  font-size: 35px;
+}
+
+.stats h1 {
+  text-align: center;
+  font-size: 40px;
+}
+
+.stats .grid p {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Footer */
+.footer {
+  color: white;
+  background-color: #35363a;
+}
+
+.footer a {
+  color: white;
+  text-decoration: none;
+}
+
+.footer .social a {
+  margin: 0 10px;
+}
+
+/* Animations */
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Tablets and under */
+@media (max-width: 768px) {
+  .grid,
+  .mission .grid,
+  .today .grid,
+  .stats .grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .mission {
+    height: auto;
+  }
+
+  .mission-text {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .leaf {
+    height: 150px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 500px) {
+  .navbar {
+    height: 110px;
+  }
+
+  .navbar .flex {
+    flex-direction: column;
+  }
+
+  .navbar ul {
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .leaf {
+    height: 150px;
+  }
+}

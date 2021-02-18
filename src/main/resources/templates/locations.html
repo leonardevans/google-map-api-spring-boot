@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/main_layout}"
+>
+
+<head>
+    <title>Recycling Locations</title>
+
+    <style type="text/css">
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px;
+            /* The height is 400 pixels */
+            width: 100%;
+            /* The width is the width of the web page */
+        }
+    </style>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${@environment.getProperty('google.maps.api.key')} + '&callback=initMap&libraries=places&v=weekly'}"
+            async></script>
+    <script>
+        // Initialize and add the map
+        function initMap() {
+            // The location of london
+            const london = {
+                lat: 51.5074,
+                lng: -0.1278
+            };
+            // The map, centered at Uluru
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: london,
+            });
+
+            var markers = [];
+            var markersOnMap = [];
+
+
+            // The marker, positioned at london
+            // const marker = new google.maps.Marker({
+            //     position: london,
+            //     map: map,
+            // });
+
+
+
+            var places = new google.maps.places.Autocomplete(document.getElementById('txtPlaces'));
+            google.maps.event.addListener(places, 'place_changed', function () {
+
+                //delete all markers on map
+                deleteAllMarkersOnMap();
+
+
+                var place = places.getPlace();
+                var latitude = place.geometry.location.lat();
+                var longitude = place.geometry.location.lng();
+
+                var marker1 = {
+                    coords: {lat: latitude, lng: longitude},
+                    content: '<h3>Your location</h3>'
+                };
+
+                // Array of markers
+                markers = [];
+                markers.push(marker1);
+
+
+                $.ajax({
+                    url: "/api/search",
+                    method: "POST",
+                    dataType: "text",
+                    data: {
+                        latitude: latitude,
+                        longitude: longitude
+                    },
+                    success: response => {
+                        var locationsAndDistance = JSON.parse(response);
+                        locationsAndDistance.forEach(locationDis => {
+                            var marker = {
+                                coords: {lat: locationDis.location.latitude, lng: locationDis.location.longitude},
+                                iconImage: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+                                content: '<div>' +
+                                    '<h5>Recycling Center: ' + locationDis.recyclingCenter.name + '</h5>' +
+                                    '<h5>Postal code: ' + locationDis.recyclingCenter.postalCode + '</h5>' +
+                                    '<h5> Distance: ' + parseFloat(locationDis.distance).toFixed(1) + ' km away</h5>' +
+                                    '</div>>'
+                            }
+                            markers.push(marker);
+                        });
+
+                        // Loop through markers
+                        for (var i = 0; i < markers.length; i++) {
+                            // Add marker
+                            addMarker(markers[i]);
+                        }
+
+                    },
+                    error: response => {
+                        console.log(response);
+                    },
+                });
+
+
+
+            });
+
+            // Add Marker Function
+            function addMarker(props) {
+                var marker = new google.maps.Marker({
+                    position: props.coords,
+                    map: map,
+                    //icon:props.iconImage
+                });
+
+                // Check for customicon
+                if (props.iconImage) {
+                    // Set icon image
+                    marker.setIcon(props.iconImage);
+                }
+
+                // Check content
+                if (props.content) {
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: props.content
+                    });
+
+                    marker.addListener('click', function () {
+                        infoWindow.open(map, marker);
+                    });
+                }
+
+                markersOnMap.push(marker)
+            }
+
+            function deleteAllMarkersOnMap() {
+                if (markersOnMap.length > 0){
+                    for (let i = 0; i < markersOnMap.length; i++) {
+                        markersOnMap[i].setMap(null);
+                    }
+                }
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+<div layout:fragment="content">
+    <!-- Recycling Locations -->
+    <section class="Recycling Locations">
+        <div class="container grid">
+            <div class="mission-text">
+                <h1>Recycling Locations</h1>
+            </div>
+            <div class="row">
+                <div class="col-12 my-3">
+                    <form>
+                        <input type="text" id="txtPlaces" class="form-control" placeholder="Enter a location"/>
+                        <input type="reset" value="clear" class="btn-secondary btn ">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--The div element for the map -->
+    <div id="map"></div>
+</div>
+
+</body>
+
+</html>

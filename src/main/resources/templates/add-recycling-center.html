@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/main_layout}"
+>
+<head>
+    <title>New Recycling Center</title>
+
+    <!--    <script type="text/javascript"-->
+    <!--            src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCaaXrzXHW5nWd0zcvMZVJD1I-UrLagU1A"></script>-->
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${@environment.getProperty('google.maps.api.key')} + '&callback=initMap&libraries=places&v=weekly'}"
+            async></script>
+    <script type="text/javascript">
+        // google.maps.event.addDomListener(window, 'load', function () {
+        function initMap() {
+            var places = new google.maps.places.Autocomplete(document.getElementById('txtPlaces'));
+            google.maps.event.addListener(places, 'place_changed', function () {
+                var place = places.getPlace();
+                var address = place.formatted_address;
+                var latitude = parseFloat( place.geometry.location.lat());
+                var longitude = parseFloat(place.geometry.location.lng());
+
+
+                document.getElementById("latitude").value = latitude;
+                document.getElementById("longitude").value = longitude;
+                document.getElementById("address").value = address;
+            });
+        }
+
+
+        // });
+    </script>
+</head>
+<body>
+<div layout:fragment="content">
+
+
+    <h1>New Recycling Center</h1>
+    <div class="row">
+        <form th:action="@{/centers/new}" method="post" th:object="${center}">
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text" th:field="*{name}" class="form-control" aria-describedby="emailHelp">
+                <div class="form-text text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Local Authority</label>
+                <input type="text" th:field="*{localAuthority}" class="form-control" aria-describedby="emailHelp">
+                <div class="form-text text-danger" th:if="${#fields.hasErrors('localAuthority')}"
+                     th:errors="*{localAuthority}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">email</label>
+                <input type="text" th:field="*{email}" class="form-control" aria-describedby="emailHelp">
+                <div class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Website url</label>
+                <input type="url" th:field="*{url}" class="form-control" aria-describedby="emailHelp">
+                <div class="form-text text-danger" th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="number" th:field="*{phone}" class="form-control" aria-describedby="emailHelp">
+                <div class="form-text text-danger" th:if="${#fields.hasErrors('postalCode')}"
+                     th:errors="*{postalCode}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Postal Code</label>
+                <input type="text" th:field="*{postalCode}" class="form-control" aria-describedby="emailHelp">
+                <div class="form-text text-danger" th:if="${#fields.hasErrors('postalCode')}"
+                     th:errors="*{postalCode}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Location</label>
+                <input type="text" id="txtPlaces" class="form-control" placeholder="Enter a location"/>
+                <div class="form-text text-danger" th:if="${#fields.hasErrors('location')}"
+                     th:errors="*{location}"></div>
+            </div>
+            <div class="mb-3">
+                <input type="number" step="any" id="latitude" readonly th:field="*{location.latitude}" class="form-control"/>
+            </div>
+            <div class="mb-3">
+                <input type="number" step="any" id="longitude" readonly th:field="*{location.longitude}" class="form-control"/>
+            </div>
+            <div class="mb-3">
+                <input type="text" id="address" readonly th:field="*{location.address}" class="form-control"/>
+            </div>
+            <button type="submit" class="btn btn-primary">Add New</button>
+        </form>
+    </div>
+</div>
+
+
+</body>
+</html>
