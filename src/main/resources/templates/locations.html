@@ -7,7 +7,11 @@
 
 <head>
     <title>Recycling Locations</title>
-
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+          integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+          crossorigin="anonymous" />
+    <link rel="stylesheet" th:href="@{/css/locations.css}"/>
     <style type="text/css">
         /* Set the size of the div element that contains the map */
         #map {
@@ -86,7 +90,7 @@
                                     '<h5>Recycling Center: ' + locationDis.recyclingCenter.name + '</h5>' +
                                     '<h5>Postal code: ' + locationDis.recyclingCenter.postalCode + '</h5>' +
                                     '<h5> Distance: ' + parseFloat(locationDis.distance).toFixed(1) + ' km away</h5>' +
-                                    '</div>>'
+                                    '</div>'
                             }
                             markers.push(marker);
                         });
@@ -150,19 +154,23 @@
 <body>
 
 <div layout:fragment="content">
+    <!--TITLE-->>
+    <section class="Locations">
+        <div class="Locations-text"></div>
+        <h1>RECYCLING LOCATIONS</h1>
+    </section>
+
     <!-- Recycling Locations -->
-    <section class="Recycling Locations">
+    <section  class="collection-dates">
         <div class="container grid">
-            <div class="mission-text">
-                <h1>Recycling Locations</h1>
-            </div>
-            <div class="row">
-                <div class="col-12 my-3">
-                    <form>
-                        <input type="text" id="txtPlaces" class="form-control" placeholder="Enter a location"/>
-                        <input type="reset" value="clear" class="btn-secondary btn ">
-                    </form>
-                </div>
+            <div class="collection-dates-text">
+                <h3>
+                    Please enter your postcode below to find your nearest recycling centre
+                </h3>
+                <form>
+                    <input type="text" id="txtPlaces" placeholder="Postcode"/>
+                    <input type="submit" name="" value="Search">
+                </form>
             </div>
         </div>
     </section>

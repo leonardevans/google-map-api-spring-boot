@@ -3,16 +3,22 @@ package com.recyclingcenter.controller;
 import com.recyclingcenter.model.Location;
 import com.recyclingcenter.model.RecyclingCenter;
 import com.recyclingcenter.payload.LocationDist;
+import com.recyclingcenter.payload.NearestBoroughRequest;
 import com.recyclingcenter.repository.LocationRepository;
 import com.recyclingcenter.repository.RecyclingCenterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
     @Autowired
@@ -20,6 +26,47 @@ public class RestController {
 
     @Autowired
     RecyclingCenterRepository recyclingCenterRepository;
+
+    @PostMapping("/api/centers")
+    public List<RecyclingCenter> showRecyclingCenters()
+    {
+        return recyclingCenterRepository.findAll();
+    }
+
+    @PostMapping("/api/centers/delete")
+    public List<RecyclingCenter> deleteRecyclingCenter(@RequestParam("id") Long id)
+    {
+        Optional<RecyclingCenter> recyclingCenter = recyclingCenterRepository.findById(id);
+        recyclingCenter.ifPresent(center -> recyclingCenterRepository.delete(center));
+        return showRecyclingCenters();
+    }
+
+    @PostMapping("/api/centers/new")
+    public String addRecyclingCenter(@Valid @RequestBody RecyclingCenter center, BindingResult bindingResult){
+        if ( center.getLocation().getAddress().isEmpty() || center.getLocation().getAddress() == null){
+            bindingResult.addError(new FieldError("center", "location", "Location's latitude, longitude and address are required"));
+        }
+        if (bindingResult.hasErrors()){
+            return "error";
+        }
+
+        Location savedLocation = locationRepository.save(center.getLocation());
+        center.setLocation(savedLocation);
+
+        RecyclingCenter savedRecyclingCenter1 = recyclingCenterRepository.save(center);
+        return "saved";
+    }
+
+    @PostMapping("/api/centers/nearBy")
+    public LocationDist getNearestRecyclingCenter(@RequestBody NearestBoroughRequest nearestBoroughRequest){
+        List<LocationDist> locationDists = new ArrayList<>();
+        nearestBoroughRequest.getCenters().forEach(center -> {
+            double distance = getDistanceFromLatLonInKm(center.getLocation().getLatitude(), center.getLocation().getLongitude(), nearestBoroughRequest.getLatitude(), nearestBoroughRequest.getLongitude());
+            LocationDist locationDist = new LocationDist(center.getLocation(), center, distance);
+            locationDists.add(locationDist);
+        });
+        return locationDists.get(0);
+    }
 
     @PostMapping("/api/search")
     public List<LocationDist> searchLocation(@RequestParam("latitude") Double latitude, @RequestParam("longitude") Double longitude) {

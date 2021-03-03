@@ -6,10 +6,211 @@
 >
 <head>
     <title>Collection Dates</title>
+    <link rel="stylesheet" th:href="@{/css/dates.css}"/>
 </head>
 <body>
 <div layout:fragment="content">
-    <h1>Collection Dates</h1>
+    <!--TITLE-->>
+    <section class="Recycle">
+
+        <div class="Recycle-text"></div>
+        <h1>COLLECTION DATES</h1>
+    </section>
+
+    <!-- Collection Section -->
+    <section class="collection-dates">
+        <div class="container grid">
+            <div class="collection-dates-text">
+                <h1>Check When Your Recycling Is Collected:</h1>
+                <p>
+                    Please enter your valid postcode below
+                </p>
+                <form id="search-form">
+                    <input type="text" id="search" placeholder="Postcode">
+                    <input type="submit" name="" value="Search">
+
+                </form>
+                <div id="results">
+
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
+<th:block layout:fragment="javascript">
+    <script th:inline="javascript" type="text/javascript">
+        var apiKey = /*[[${@environment.getProperty('google.maps.api.key')}]]*/ 'default';
+
+        let boroughs = [];
+        let postCodeAddressComp = [];
+        let postCodelocation;
+
+        fetch("http://localhost:8080/api/centers", {
+            method: 'post',
+            headers: {
+                "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+            }
+        })
+            .then(response => response.json())
+            .then(function (myBoroughs) {
+                myBoroughs.map(borough => {
+                    let urlLatLng = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+ borough.location.latitude +"%2C"+ borough.location.longitude+"&result_type=locality&key="+ apiKey;
+
+                    fetch(urlLatLng, {
+                        method: 'get',
+                        headers: {
+                            "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                        }
+                    }).then(response => response.json()).
+                    then(data => {
+                        if (data.status === "OK")
+                            borough.address_components =  data.results[0].address_components;
+                    }).catch(function (error) {
+                        console.log('Request failed', error);
+                    });
+                })
+                boroughs = myBoroughs;
+            })
+            .catch(function (error) {
+                console.log('Request failed', error);
+            });
+
+
+        $("#search-form").submit((e)=>{
+            e.preventDefault();
+            let postcode = $("#search").val();
+            let urlPostcode = "https://maps.googleapis.com/maps/api/geocode/json?components=postal_code:"+ postcode +"|country:UK&key="+ apiKey;
+            $.ajax({
+                method: "get",
+                url : urlPostcode,
+                dataType: "text",
+                success: response=>{
+                    let data = JSON.parse(response);
+                    switch (data.status) {
+                        case "OK":
+                            $("#results").text("");
+                            getByLatLng(data);
+                            break;
+                        case "ZERO_RESULTS":
+                            $("#results").text("No results found for this postcode");
+                            return;
+                        default:
+                            console.log("error");
+                            return;
+                    }
+                }
+            });
+
+            function getByLatLng(postalCodeData) {
+                let postalCodeCood = postalCodeData.results[0].geometry;
+                let urlLatLng = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+ postalCodeCood.location.lat +"%2C"+ postalCodeCood.location.lng+"&result_type=locality&key="+ apiKey;
+
+                fetch(urlLatLng, {
+                    method: 'get',
+                    headers: {
+                        "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                    }
+                })
+                    .then(response => response.json())
+                    .then(function (data) {
+
+                        switch (data.status) {
+                            case "OK":
+                                postCodeAddressComp = data.results[0].address_components;
+                                postCodelocation = data.results[0].geometry.location;
+                                break;
+                            case "ZERO_RESULTS":
+                                postCodeAddressComp = postalCodeData.results[0].address_components;
+                                postCodelocation = postalCodeData.results[0].geometry.location;
+                                break;
+                            default:
+                                console.log("error");
+                                return;
+                        }
+                        getCollectionDates()
+                    })
+                    .catch(function (error) {
+                        console.log('Request failed', error);
+                    });
+            }
+        })
+
+        function getCollectionDates() {
+            let postcodeLocalityLongName;
+            let nearbyBoroughs = [];
+
+            postCodeAddressComp.map(addressComp => {
+                if (addressComp.types.includes("locality")){
+                    postcodeLocalityLongName = addressComp.long_name;
+                }
+            })
+
+            if (postcodeLocalityLongName === undefined){
+                postCodeAddressComp.map(addressComp => {
+                    if (addressComp.types.includes("postal_town")){
+                        postcodeLocalityLongName = addressComp.long_name;
+                    }
+                })
+            }
+
+            if (postcodeLocalityLongName === undefined){
+                postCodeAddressComp.map(addressComp => {
+                    if (addressComp.types.includes("administrative_area_level_2")){
+                        postcodeLocalityLongName = addressComp.long_name;
+                    }
+                })
+            }
+
+            if (postcodeLocalityLongName === undefined){
+                $("#results").text("Please use another postcode");
+            }
+
+            boroughs.map(borough => {
+                if (borough.address_components !== undefined){
+                    borough.address_components.map(boroughAddressComp => {
+                        if (boroughAddressComp.long_name === postcodeLocalityLongName){
+                            nearbyBoroughs.push(borough);
+                            return true;
+                        }
+                    })
+                }
+            })
+
+            let requestData = {
+                centers: nearbyBoroughs,
+                latitude:postCodelocation.lat,
+                longitude: postCodelocation.lng
+            };
+            let nearbyBorough;
+            $.ajax({
+                url: "http://localhost:8080/api/centers/nearBy",
+                method: "POST",
+                contentType: "application/json",
+                dataType: "text",
+                data: JSON.stringify(requestData),
+                success: response => {
+                    nearbyBorough = JSON.parse(response);
+                    console.log( nearbyBorough)
+                    if (nearbyBorough === undefined){
+                        $("#results").text("Your postcode did not match any borough");
+                    }else{
+                        let divElement = "<div>";
+                        divElement += "<ul>"
+                        divElement += "<li>Borough: " + nearbyBorough.recyclingCenter.localAuthority+ "</li>";
+                        divElement += "<li>Collection day: " + nearbyBorough.recyclingCenter.collectionDay + "</li>";
+                        divElement += "</ul></div>"
+                        $("#results").html(divElement);
+                    }
+                },
+                error: response => {
+                    console.log(response);
+                },
+            });
+
+
+        }
+    </script>
+</th:block>
 </body>
 </html>

@@ -1,9 +1,7 @@
 package com.recyclingcenter.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class RecyclingCenter {
@@ -21,20 +19,21 @@ public class RecyclingCenter {
     @NotEmpty
     private String url;
 
-    @NotNull
-    private Integer phone;
+    private long phone;
     @NotEmpty
     private String postalCode;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Location location;
 
+    private String collectionDay;
+
     //no argument constructor
 
     public RecyclingCenter() {
     }
 
-    public RecyclingCenter(@NotEmpty String name, @NotEmpty String localAuthority, @NotEmpty String email, @NotEmpty String url, @NotNull Integer phone, @NotEmpty String postalCode, Location location) {
+    public RecyclingCenter(@NotEmpty String name, @NotEmpty String localAuthority, @NotEmpty String email, @NotEmpty String url, long phone, @NotEmpty String postalCode, Location location, String collectionDay) {
         this.name = name;
         this.localAuthority = localAuthority;
         this.email = email;
@@ -42,6 +41,7 @@ public class RecyclingCenter {
         this.phone = phone;
         this.postalCode = postalCode;
         this.location = location;
+        this.collectionDay = collectionDay;
     }
 
     public Long getId() {
@@ -76,11 +76,11 @@ public class RecyclingCenter {
         this.email = email;
     }
 
-    public Integer getPhone() {
+    public long getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(long phone) {
         this.phone = phone;
     }
 
@@ -103,8 +103,16 @@ public class RecyclingCenter {
     public String getUrl() {
         return url;
     }
-
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public String getCollectionDay() {
+        return collectionDay;
+    }
+
+    public void setCollectionDay(String collectionDate) {
+        this.collectionDay = collectionDate;
+    }
+
 }

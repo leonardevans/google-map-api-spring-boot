@@ -6,10 +6,53 @@
 >
 <head>
     <title>Recyclable items</title>
+    <link rel="stylesheet" th:href="@{/css/recyclablestyle.css}"/>
 </head>
 <body>
 <div layout:fragment="content">
-    <h1>Recyclable Items</h1>
+    <!--TITLE-->>
+    <section class="Recycle">
+
+        <div class="Recycle-text"></div>
+        <h1>RECYCLABLE ITEMS</h1>
+    </section>
+
+    <!-- What Would you like to explore? -->
+    <section class="explore">
+        <div class="container grid">
+            <div class="explore-text">
+                <h1>What Would You Like To Explore?</h1>
+                <p>
+                    We want to bring ease to recycling and part of that means educating about the many everyday items that can be
+                    recycled. This page is for those who would like to understand what, and how to recycyle said items. You can
+                    either search for items in the box, or press the images below.
+                </p>
+            </div>
+            <div>
+                <!--Form-->
+                <form class=Recyclableform>
+                    <div class="input_container">
+                        <p>Search Recyclable Items</p>
+                        <!--<label for = "Recyclableitem"> What would you like to recycle? </label> -->
+                        <input type="text" id="Recyclableitem" name="Recyclableitem" size="50"><br><br>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Table of material -->
+    <div class="row">
+        <div class="column">
+            <img th:src="@{/images/cans.jpg}" alt=metal style=width:100%>
+        </div>
+        <div class="column">
+            <img th:src="@{/images/metal.jpg}" alt=plastic style=width:100%>
+        </div>
+        <div class="column">
+            <img th:src="@{/images/plastic.jpg}" alt=wood style=width:100%>
+        </div>
+    </div>
 </div>
 </body>
 </html>
